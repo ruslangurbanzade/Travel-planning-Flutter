@@ -25,6 +25,7 @@ class TravelApp {
   static const _kFontFam = 'TravelApp';
   static const String? _kFontPkg = null;
 
-  static const IconData plane_departure = IconData(0xf5b0, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData card_travel = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData plane_arrival = IconData(0xf5af, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData plane_departure = IconData(0xf5b0, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

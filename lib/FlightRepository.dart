@@ -13,4 +13,6 @@ class FlightRepository {
   FlightRepository._internal(this.flightApi);
 
   Future<List<Flight?>> getFlights() => flightApi.fetchAll();
+  Future<void> selectFlight(String number) => flightApi.select(number);
+  Future<String?> getSelectedFlightNumber() => flightApi.fetchSelected();
 }

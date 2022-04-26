@@ -4,11 +4,13 @@ class Flight {
   String? number;
   String? origin;
   String? destination;
-  double? duration;
-  int? price;
+  int? duration;
+  String? price;
 }
 
 @HostApi()
 abstract class FlightApi {
   List<Flight> fetchAll();
+  void select(String number);
+  String? fetchSelected();
 }

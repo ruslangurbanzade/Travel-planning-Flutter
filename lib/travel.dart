@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:travel_planning/FlightRepository.dart';
 import 'package:travel_planning/flights.dart';
 import 'package:travel_planning/presentation/travel_app_icons.dart';
 
@@ -13,61 +14,53 @@ class TravelPage extends StatefulWidget {
 }
 
 class _TravelPage extends State<TravelPage> {
-  int count = 0;
 
-  void incrementCounter() {
+  String title = "Not selected";
+
+  void updateTitle(String newTitle) {
     setState(() {
-      count++;
+      title = newTitle;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text("Plan a trip"),
-        ),
-        body: Container(
-          color: Colors.white70,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Plan a trip"),
+      ),
+      body: Container(
+        color: Colors.white70,
+        child: Card(
           child: Column(
-            children: const [
-              CardItem(),
-              Icon(
-                TravelApp.card_travel,
-                size: 16.0,
-              )
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: Icon(TravelApp.card_travel, size: 50),
+                title: Text(title),
+                subtitle: Text('My Flight'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const FlightsPage()),
+                  ).then((value) {
+
+                    FlightRepository().getSelectedFlightNumber().then((value)
+                    {
+                      if (value != null) {
+                        updateTitle(value);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Flight selected!")));
+                      }
+                    }
+                    );
+                  }
+                  );
+                },
+              ),
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class CardItem extends StatelessWidget {
-  const CardItem({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          ListTile(
-            leading: Icon(TravelApp.plane_departure, size: 50),
-            title: Text('Heart Shaker'),
-            subtitle: Text('TWICE'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const FlightsPage()),
-              );
-            },
-          ),
-        ],
       ),
     );
   }

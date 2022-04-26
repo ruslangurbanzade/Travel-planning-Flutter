@@ -20,8 +20,8 @@ class Flight {
   String? number;
   String? origin;
   String? destination;
-  double? duration;
-  int? price;
+  int? duration;
+  String? price;
 
   Object encode() {
     final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
@@ -39,8 +39,8 @@ class Flight {
       number: pigeonMap['number'] as String?,
       origin: pigeonMap['origin'] as String?,
       destination: pigeonMap['destination'] as String?,
-      duration: pigeonMap['duration'] as double?,
-      price: pigeonMap['price'] as int?,
+      duration: pigeonMap['duration'] as int?,
+      price: pigeonMap['price'] as String?,
     );
   }
 }
@@ -104,6 +104,50 @@ class FlightApi {
       );
     } else {
       return (replyMap['result'] as List<Object?>?)!.cast<Flight?>();
+    }
+  }
+
+  Future<void> select(String arg_number) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.FlightApi.select', codec, binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(<Object?>[arg_number]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error = (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<String?> fetchSelected() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.FlightApi.fetchSelected', codec, binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(null) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error = (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else {
+      return (replyMap['result'] as String?);
     }
   }
 }

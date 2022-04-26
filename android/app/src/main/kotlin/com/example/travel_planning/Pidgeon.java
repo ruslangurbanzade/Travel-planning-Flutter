@@ -42,15 +42,15 @@ public class Pidgeon {
       this.destination = setterArg;
     }
 
-    private @Nullable Double duration;
-    public @Nullable Double getDuration() { return duration; }
-    public void setDuration(@Nullable Double setterArg) {
+    private @Nullable Long duration;
+    public @Nullable Long getDuration() { return duration; }
+    public void setDuration(@Nullable Long setterArg) {
       this.duration = setterArg;
     }
 
-    private @Nullable Long price;
-    public @Nullable Long getPrice() { return price; }
-    public void setPrice(@Nullable Long setterArg) {
+    private @Nullable String price;
+    public @Nullable String getPrice() { return price; }
+    public void setPrice(@Nullable String setterArg) {
       this.price = setterArg;
     }
 
@@ -70,13 +70,13 @@ public class Pidgeon {
         this.destination = setterArg;
         return this;
       }
-      private @Nullable Double duration;
-      public @NonNull Builder setDuration(@Nullable Double setterArg) {
+      private @Nullable Long duration;
+      public @NonNull Builder setDuration(@Nullable Long setterArg) {
         this.duration = setterArg;
         return this;
       }
-      private @Nullable Long price;
-      public @NonNull Builder setPrice(@Nullable Long setterArg) {
+      private @Nullable String price;
+      public @NonNull Builder setPrice(@Nullable String setterArg) {
         this.price = setterArg;
         return this;
       }
@@ -108,9 +108,9 @@ public class Pidgeon {
       Object destination = map.get("destination");
       pigeonResult.setDestination((String)destination);
       Object duration = map.get("duration");
-      pigeonResult.setDuration((Double)duration);
+      pigeonResult.setDuration((duration == null) ? null : ((duration instanceof Integer) ? (Integer)duration : (Long)duration));
       Object price = map.get("price");
-      pigeonResult.setPrice((price == null) ? null : ((price instanceof Integer) ? (Integer)price : (Long)price));
+      pigeonResult.setPrice((String)price);
       return pigeonResult;
     }
   }
@@ -143,6 +143,8 @@ public class Pidgeon {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter.*/
   public interface FlightApi {
     @NonNull List<Flight> fetchAll();
+    void select(@NonNull String number);
+    @Nullable String fetchSelected();
 
     /** The codec used by FlightApi. */
     static MessageCodec<Object> getCodec() {
@@ -159,6 +161,49 @@ public class Pidgeon {
             Map<String, Object> wrapped = new HashMap<>();
             try {
               List<Flight> output = api.fetchAll();
+              wrapped.put("result", output);
+            }
+            catch (Error | RuntimeException exception) {
+              wrapped.put("error", wrapError(exception));
+            }
+            reply.reply(wrapped);
+          });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.FlightApi.select", getCodec());
+        if (api != null) {
+          channel.setMessageHandler((message, reply) -> {
+            Map<String, Object> wrapped = new HashMap<>();
+            try {
+              ArrayList<Object> args = (ArrayList<Object>)message;
+              String numberArg = (String)args.get(0);
+              if (numberArg == null) {
+                throw new NullPointerException("numberArg unexpectedly null.");
+              }
+              api.select(numberArg);
+              wrapped.put("result", null);
+            }
+            catch (Error | RuntimeException exception) {
+              wrapped.put("error", wrapError(exception));
+            }
+            reply.reply(wrapped);
+          });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.FlightApi.fetchSelected", getCodec());
+        if (api != null) {
+          channel.setMessageHandler((message, reply) -> {
+            Map<String, Object> wrapped = new HashMap<>();
+            try {
+              String output = api.fetchSelected();
               wrapped.put("result", output);
             }
             catch (Error | RuntimeException exception) {
