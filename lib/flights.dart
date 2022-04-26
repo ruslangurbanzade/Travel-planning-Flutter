@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:travel_planning/FlightRepository.dart';
+import 'package:travel_planning/pigeon.dart';
+import 'package:travel_planning/presentation/travel_app_icons.dart';
 
 class FlightsPage extends StatelessWidget {
   const FlightsPage({Key? key}) : super(key: key);
@@ -7,26 +10,45 @@ class FlightsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _suggestions = <String>[];
     return MaterialApp(
       title: "Flutter list",
       home: Scaffold(
           appBar: AppBar(
             title: const Text("Flutter list"),
           ),
-          body: ListView.builder(itemBuilder: (context, i) {
-            if (i.isOdd) return const Divider();
-            final index = i ~/ 2; /*3*/
-            if (index >= _suggestions.length) {
-              _suggestions.addAll(generateValue()); /*4*/
-            }
-            return ListTile(
-              title: Text(
-                _suggestions[index],
-                style: _biggerFont,
-              ),
-            );
-          })),
+          body: FutureBuilder(
+            builder: (context, projectSnap) {
+              if (projectSnap.connectionState == ConnectionState.none &&
+                  projectSnap.hasData == false) {
+                //print('project snapshot data is: ${projectSnap.data}');
+                return Container();
+              }
+              if (projectSnap.connectionState == ConnectionState.done) {
+                final flight = projectSnap.data as List<Flight?>;
+                return ListView.builder(
+                    itemCount: flight.length,
+                    itemBuilder: (context, i) {
+                      return Card(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            ListTile(
+                              leading:
+                                  Icon(TravelApp.plane_departure, size: 50),
+                              title: Text(flight[i]?.number ?? "canceled"),
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    });
+              }
+              return Container();
+            },
+            future: FlightRepository().getFlights(),
+          )),
     );
   }
 
