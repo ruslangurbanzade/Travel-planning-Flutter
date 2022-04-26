@@ -23,22 +23,14 @@ class _TravelPage extends State<TravelPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text("Plan a trip"),
-        ),
-        body: Container(
-          color: Colors.white70,
-          child: Column(
-            children: const [
-              CardItem(),
-              Icon(
-                TravelApp.card_travel,
-                size: 16.0,
-              )
-            ],
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Plan a trip"),
+      ),
+      body: Container(
+        color: Colors.white70,
+        child: Column(
+          children: const [CardItem()],
         ),
       ),
     );
@@ -57,7 +49,7 @@ class CardItem extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           ListTile(
-            leading: Icon(TravelApp.plane_departure, size: 50),
+            leading: Icon(TravelApp.card_travel, size: 50),
             title: Text('Heart Shaker'),
             subtitle: Text('TWICE'),
             onTap: () {
